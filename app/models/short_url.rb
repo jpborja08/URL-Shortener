@@ -26,10 +26,10 @@ class ShortUrl < ApplicationRecord
   def generate_token
     return if token.present?
 
-    self.token = loop do
-      random_token = SecureRandom.urlsafe_base64(5)[0,6]
-      break random_token unless ShortUrl.exists?(token: random_token)
-    end
+    potential_tokens = Array.new(100) { SecureRandom.urlsafe_base64(5)[0,6] }
+    existing_tokens = ShortUrl.where(token: potential_tokens).pluck(:token)
+
+    self.token = (potential_tokens - existing_tokens).first
   end
 
   def short_url

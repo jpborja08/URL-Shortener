@@ -1,11 +1,9 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: <%= ENV['DB_HOST'] %>
+  url: <%= ENV['DATABASE_URL'] %>
   pool: 5
   timeout: 5000
-  username: <%= ENV['DB_USERNAME'] %>
-  password: <%= ENV['DB_PASSWORD'] %>
   database: <%= ENV['DB_NAME'] %>
 
 development:

@@ -3,9 +3,14 @@ module Api
     class ShortUrlsController < ApplicationController
       before_action :find_url_by_token, only: %i[show destroy]
 
+      def index
+        @urls = ShortUrl.all.order(id: :desc)
+        render json: @urls
+      end
+
       def shorten
         url = ShortUrl.find_or_initialize_by(original_url: params[:original_url])
-        return url.short_url if url.persisted?
+        return render json: { shortUrl: url.short_url } if url.persisted?
 
         url.original_url = params[:original_url]
         url.save!
@@ -23,18 +28,16 @@ module Api
       end
 
       def fetch_original_url
-        token = params[:url].split('/').last
+        token = params[:original_url].split('/').last
         url = ShortUrl.find_by(token: token)
         return render json: { error: 'Not Found' }, status: :not_found unless url
 
-        render json: { url: url.original_url }
+        render json: { original_url: url.original_url }
       end
 
       private
 
       def find_url_by_token
-        puts 'HOLA'
-        puts params[:token]
         @url = ShortUrl.find_by(token: params[:token])
 
         return render json: { error: 'Not Found' }, status: :not_found unless @url
