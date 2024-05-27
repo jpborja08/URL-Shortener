@@ -5,7 +5,6 @@ module Api
 
       def index
         @urls = ShortUrl.all.order(id: :desc)
-        render json: @urls
       end
 
       def shorten
